@@ -14,9 +14,6 @@ const Scene = () => {
         zIndex: -1,
         pointerEvents: "none",
       }}
-      onPointerMove={(e) => {
-
-      }}
     >
       <Suspense fallback={null}>
         <Background />

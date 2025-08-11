@@ -11,7 +11,7 @@ interface Certificate {
 }
 
 interface SliderProps {
-  certificates: Certificate[];
+  certificates: readonly Certificate[];
   reverse?: boolean;
   onImageClick: (certificate: Certificate) => void;
   sliderId: string;
