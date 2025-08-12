@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import SectionHeading from "./section-heading";
 import { useSectionInView } from "../lib/hooks";
 import { certificationsData } from "../lib/data";
@@ -17,116 +17,126 @@ interface SliderProps {
   sliderId: string;
 }
 
-const CertificateSlider: React.FC<SliderProps> = ({ certificates, reverse = false, onImageClick, sliderId }) => {
-  const quantity = certificates.length;
+const CertificateSlider: React.FC<SliderProps> = ({ 
+  certificates, 
+  reverse = false, 
+  onImageClick, 
+  sliderId 
+}) => {
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    const styleId = `slider-styles-${sliderId}`;
-    let styleElement = document.getElementById(styleId) as HTMLStyleElement;
-    
-    if (!styleElement) {
-      styleElement = document.createElement('style');
-      styleElement.id = styleId;
-      document.head.appendChild(styleElement);
-    }
+    const styleId = `bulletproof-slider-${sliderId}`;
+    if (document.getElementById(styleId)) return;
 
-    const css = `
-      @keyframes autoRun-${sliderId} {
-        from { left: 100%; }
-        to { left: calc(150px * -1 * ${quantity}); }
+    const itemWidth = 160;
+    const animationDuration = certificates.length * 4;
+
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .bulletproof-slider-${sliderId} {
+        mask-image: linear-gradient(to right, transparent, #000 15% 85%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 15% 85%, transparent);
+        position: relative;
+        overflow: hidden;
       }
-      
-      @keyframes reversePlay-${sliderId} {
-        from { left: calc(150px * -1 * ${quantity}); }
-        to { left: 100%; }
+
+      .bulletproof-slider-${sliderId} .slider-track {
+        display: flex;
+        width: fit-content;
+        animation: slide-${sliderId} ${animationDuration}s linear infinite;
+        animation-direction: ${reverse ? 'reverse' : 'normal'};
+        will-change: transform;
+        transform: translateZ(0);
       }
-      
-      .slider-${sliderId} {
-        mask-image: linear-gradient(
-          to right,
-          transparent,
-          #000 10% 90%,
-          transparent
-        );
-        -webkit-mask-image: linear-gradient(
-          to right,
-          transparent,
-          #000 10% 90%,
-          transparent
-        );
+
+      .bulletproof-slider-${sliderId}.paused .slider-track {
+        animation-play-state: paused;
       }
-      
-      .slider-${sliderId} .item {
-        animation: ${reverse ? `reversePlay-${sliderId}` : `autoRun-${sliderId}`} 20s linear infinite;
-        animation-delay: calc((20s / ${quantity}) * (var(--position) - 1) - 20s) !important;
+
+      .bulletproof-slider-${sliderId} .slide-item {
+        flex: 0 0 auto;
+        width: 140px;
+        height: 120px;
+        margin-right: 1rem;
+        transform: translateZ(0);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
-      
-      .slider-${sliderId}:hover .item {
-        animation-play-state: paused !important;
-      }
-      
-      .slider-${sliderId} .item:hover {
-        transform: scale(1.05);
+
+      .bulletproof-slider-${sliderId} .slide-item:hover {
+        transform: scale(1.05) translateZ(0);
         z-index: 10;
       }
-      
-      /* Mobile responsive styles */
-      @media (max-width: 640px) {
-        .slider-${sliderId} .item {
-          width: 160px !important;
-          height: 110px !important;
+
+      @keyframes slide-${sliderId} {
+        0% {
+          transform: translateX(0);
         }
-        
-        @keyframes autoRun-${sliderId} {
-          from { left: 100%; }
-          to { left: calc(100px * -1 * ${quantity}); }
-        }
-        
-        @keyframes reversePlay-${sliderId} {
-          from { left: calc(100px * -1 * ${quantity}); }
-          to { left: 100%; }
+        100% {
+          transform: translateX(-${itemWidth * certificates.length}px);
         }
       }
-      
-      @media (min-width: 641px) {
-        .slider-${sliderId} .item {
-          width: 280px !important;
-          height: 180px !important;
+
+      /* Mobile styles */
+      @media (min-width: 640px) {
+        .bulletproof-slider-${sliderId} .slide-item {
+          width: 280px;
+          height: 180px;
         }
+
+        @keyframes slide-${sliderId} {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-${280 * certificates.length}px);
+          }
+        }
+      }
+
+      /* Performance optimizations */
+      .bulletproof-slider-${sliderId} * {
+        backface-visibility: hidden;
+        perspective: 1000px;
       }
     `;
 
-    styleElement.textContent = css;
+    document.head.appendChild(style);
 
     return () => {
       const existingStyle = document.getElementById(styleId);
-      if (existingStyle) {
-        existingStyle.remove();
-      }
+      if (existingStyle) existingStyle.remove();
     };
-  }, [sliderId, quantity, reverse]);
+  }, [sliderId, certificates.length, reverse]);
+
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
 
   return (
     <div 
-      className={`slider-${sliderId} w-full overflow-hidden relative h-32 sm:h-48`}
-      data-reverse={reverse}
+      className={`bulletproof-slider-${sliderId} w-full h-32 sm:h-48 ${isPaused ? 'paused' : ''}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <div className="list flex w-full relative">
-        {certificates.map((cert, index) => (
+      <div className="slider-track">
+        {[...certificates, ...certificates, ...certificates].map((cert, index) => (
           <div
-            key={cert.id}
-            className="item absolute cursor-pointer transition-all duration-300 hover:shadow-2xl w-[100px] h-[120px] sm:w-[280px] sm:h-[180px]"
-            style={{
-              '--position': index + 1,
-              left: '100%',
-            } as React.CSSProperties}
+            key={`${cert.id}-${index}`}
+            className="slide-item cursor-pointer"
             onClick={() => onImageClick(cert)}
           >
             <div className="relative w-full h-full group">
               <img 
                 src={cert.src} 
                 alt={cert.alt}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover rounded-xl shadow-lg border border-white/20 backdrop-blur-sm transition-all duration-300 group-hover:brightness-110"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-xl flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center p-2">
@@ -148,34 +158,90 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ certificate, isOpen, onClose }) => {
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const currentScrollY = window.scrollY;
+      setScrollPosition(currentScrollY);
+      
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${currentScrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollPosition);
+    }
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      if (isOpen) {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+      }
+    };
+  }, [isOpen, onClose, scrollPosition]);
+
   if (!isOpen || !certificate) return null;
 
   return (
     <div 
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+        margin: 0,
+        padding: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
       onClick={onClose}
     >
       <div 
-        className="relative max-w-4xl max-h-[90vh] w-full bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl overflow-hidden shadow-2xl"
+        className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl overflow-hidden shadow-2xl"
+        style={{
+          position: 'relative',
+          maxWidth: '56rem',
+          maxHeight: '90vh',
+          width: '100%',
+          margin: 'auto',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="absolute w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            zIndex: 10,
+          }}
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
@@ -183,7 +249,13 @@ const Modal: React.FC<ModalProps> = ({ certificate, isOpen, onClose }) => {
           <img
             src={certificate.src}
             alt={certificate.alt}
-            className="w-full h-auto max-h-[80vh] object-contain"
+            className="w-full h-auto object-contain"
+            style={{
+              maxHeight: '70vh',
+              width: '100%',
+              height: 'auto',
+            }}
+            loading="eager"
           />
         </div>
 
@@ -205,70 +277,46 @@ export default function Achievement() {
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleImageClick = (certificate: Certificate) => {
+  const handleImageClick = useCallback((certificate: Certificate) => {
     setSelectedCertificate(certificate);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedCertificate(null);
-  };
-
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closeModal();
-      }
-    };
-
-    if (isModalOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isModalOpen]);
+  }, []);
 
   return (
     <>
       <section
         id="achievement"
         ref={ref}
-        className="mb-20 sm:mb-28 scroll-mt-28 text-center text-white px-2 sm:px-4 max-w-6xl mx-auto"
+        className="mb-20 sm:mb-28 scroll-mt-28 text-center text-white px-2 sm:px-4 max-w-6xl mx-auto overflow-hidden"
       >
         <SectionHeading>My Achievements</SectionHeading>
         
-        <div className="space-y-6">
-          <div className="w-full">
-            <CertificateSlider 
-              certificates={certificationsData.row1}
-              reverse={false}
-              onImageClick={handleImageClick}
-              sliderId="row1"
-            />
-          </div>
+        <div className="space-y-8">
+          <CertificateSlider 
+            certificates={certificationsData.row1}
+            reverse={false}
+            onImageClick={handleImageClick}
+            sliderId="row1"
+          />
 
-          <div className="w-full">
-            <CertificateSlider 
-              certificates={certificationsData.row2}
-              reverse={true}
-              onImageClick={handleImageClick}
-              sliderId="row2"
-            />
-          </div>
+          <CertificateSlider 
+            certificates={certificationsData.row2}
+            reverse={true}
+            onImageClick={handleImageClick}
+            sliderId="row2"
+          />
 
-          <div className="w-full">
-            <CertificateSlider 
-              certificates={certificationsData.row3}
-              reverse={false}
-              onImageClick={handleImageClick}
-              sliderId="row3"
-            />
-          </div>
+          <CertificateSlider 
+            certificates={certificationsData.row3}
+            reverse={false}
+            onImageClick={handleImageClick}
+            sliderId="row3"
+          />
         </div>
       </section>
 

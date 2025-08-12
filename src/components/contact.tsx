@@ -25,7 +25,6 @@ export default function Contact() {
 
       if (result.success) {
         toast.success("Email sent successfully!");
-        // Reset form
         (e.target as HTMLFormElement).reset();
       } else {
         toast.error(result.error || "Failed to send email");
@@ -41,7 +40,7 @@ export default function Contact() {
     <motion.section
       id="contact"
       ref={ref}
-      className="mb-20 sm:mb-28 flex flex-col items-center justify-center min-h-[80vh] px-4 text-white"
+      className="scroll-mt-20 mt-10 sm:mt-10 mb-28 sm:mb-20 flex flex-col items-center justify-center min-h-[80vh] px-4 text-white"
       initial={{
         opacity: 0,
       }}
