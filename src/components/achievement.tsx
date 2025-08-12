@@ -3,6 +3,13 @@ import SectionHeading from "./section-heading";
 import { useSectionInView } from "../lib/hooks";
 import { certificationsData } from "../lib/data";
 
+// --- FUNGSI BARU ---
+// Fungsi helper untuk mengubah ekstensi gambar menjadi .webp
+const getWebpSrc = (src: string) => {
+  // Menggunakan regular expression untuk mengganti .png, .jpg, atau .jpeg menjadi .webp
+  return src.replace(/\.(png|jpe?g)$/i, '.webp');
+};
+
 interface Certificate {
   id: number;
   src: string;
@@ -128,14 +135,22 @@ const CertificateSlider: React.FC<SliderProps> = ({
           >
             <div className="relative w-full h-full group">
               <img 
-                src={cert.src} 
+                // --- PERUBAHAN 1 ---
+                // Gunakan fungsi getWebpSrc untuk mendapatkan URL WebP
+                src={getWebpSrc(cert.src)} 
                 alt={cert.alt}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover rounded-xl shadow-lg border border-white/20 backdrop-blur-sm transition-all duration-300 group-hover:brightness-110"
+                // --- PERUBAHAN 2 ---
+                // Tambahkan fallback ke gambar asli jika WebP gagal dimuat
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
+                  // Cek untuk menghindari loop tak terbatas jika gambar asli juga gagal
+                  if (target.src !== cert.src) {
+                    target.onerror = null; // Hapus event handler setelah fallback
+                    target.src = cert.src; // Ganti ke URL asli (.png/.jpg)
+                  }
                 }}
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-xl flex items-center justify-center">
@@ -160,7 +175,7 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ certificate, isOpen, onClose }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       const currentScrollY = window.scrollY;
       setScrollPosition(currentScrollY);
@@ -205,40 +220,20 @@ const Modal: React.FC<ModalProps> = ({ certificate, isOpen, onClose }) => {
     <div 
       className="fixed bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 9999,
-        margin: 0,
-        padding: '1rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, margin: 0, padding: '1rem',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
       onClick={onClose}
     >
       <div 
         className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl overflow-hidden shadow-2xl"
-        style={{
-          position: 'relative',
-          maxWidth: '56rem',
-          maxHeight: '90vh',
-          width: '100%',
-          margin: 'auto',
-        }}
+        style={{ position: 'relative', maxWidth: '56rem', maxHeight: '90vh', width: '100%', margin: 'auto' }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
           className="absolute w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
-          style={{
-            position: 'absolute',
-            top: '1rem',
-            right: '1rem',
-            zIndex: 10,
-          }}
+          style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10, }}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -247,25 +242,28 @@ const Modal: React.FC<ModalProps> = ({ certificate, isOpen, onClose }) => {
 
         <div className="relative">
           <img
-            src={certificate.src}
+            // --- PERUBAHAN 3 ---
+            // Terapkan juga konversi WebP untuk gambar di modal
+            src={getWebpSrc(certificate.src)}
             alt={certificate.alt}
             className="w-full h-auto object-contain"
-            style={{
-              maxHeight: '70vh',
-              width: '100%',
-              height: 'auto',
-            }}
+            style={{ maxHeight: '70vh', width: '100%', height: 'auto' }}
             loading="eager"
+            // --- PERUBAHAN 4 ---
+            // Tambahkan juga fallback di sini
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== certificate.src) {
+                target.onerror = null;
+                target.src = certificate.src;
+              }
+            }}
           />
         </div>
 
         <div className="p-6 bg-gradient-to-t from-black/50 to-transparent">
-          <h3 className="text-xl font-bold text-white mb-2">
-            {certificate.title}
-          </h3>
-          <p className="text-white/80">
-            {certificate.alt}
-          </p>
+          <h3 className="text-xl font-bold text-white mb-2">{certificate.title}</h3>
+          <p className="text-white/80">{certificate.alt}</p>
         </div>
       </div>
     </div>
@@ -287,6 +285,7 @@ export default function Achievement() {
     setSelectedCertificate(null);
   }, []);
 
+  // Tidak ada perubahan di komponen utama ini
   return (
     <>
       <section
@@ -303,14 +302,12 @@ export default function Achievement() {
             onImageClick={handleImageClick}
             sliderId="row1"
           />
-
           <CertificateSlider 
             certificates={certificationsData.row2}
             reverse={true}
             onImageClick={handleImageClick}
             sliderId="row2"
           />
-
           <CertificateSlider 
             certificates={certificationsData.row3}
             reverse={false}
