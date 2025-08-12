@@ -12,7 +12,7 @@ const About = () => {
       <div className="relative">
         <motion.img
           src="https://media.licdn.com/dms/image/v2/D5603AQF1omDHbgfL1w/profile-displayphoto-scale_200_200/B56Zg3q0q3HUAo-/0/1753280630857?e=2147483647&v=beta&t=GaB0uDyb0f8IuqZAtQ86lt4kvAnPm46Ga6Yod4jVV_0"
-          alt="Alka Portrait"
+          alt="Alka Alvin"
           className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl"
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
