@@ -3,10 +3,7 @@ import SectionHeading from "./section-heading";
 import { useSectionInView } from "../lib/hooks";
 import { certificationsData } from "../lib/data";
 
-// --- FUNGSI BARU ---
-// Fungsi helper untuk mengubah ekstensi gambar menjadi .webp
 const getWebpSrc = (src: string) => {
-  // Menggunakan regular expression untuk mengganti .png, .jpg, atau .jpeg menjadi .webp
   return src.replace(/\.(png|jpe?g)$/i, '.webp');
 };
 
@@ -135,21 +132,16 @@ const CertificateSlider: React.FC<SliderProps> = ({
           >
             <div className="relative w-full h-full group">
               <img 
-                // --- PERUBAHAN 1 ---
-                // Gunakan fungsi getWebpSrc untuk mendapatkan URL WebP
                 src={getWebpSrc(cert.src)} 
                 alt={cert.alt}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover rounded-xl shadow-lg border border-white/20 backdrop-blur-sm transition-all duration-300 group-hover:brightness-110"
-                // --- PERUBAHAN 2 ---
-                // Tambahkan fallback ke gambar asli jika WebP gagal dimuat
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  // Cek untuk menghindari loop tak terbatas jika gambar asli juga gagal
                   if (target.src !== cert.src) {
-                    target.onerror = null; // Hapus event handler setelah fallback
-                    target.src = cert.src; // Ganti ke URL asli (.png/.jpg)
+                    target.onerror = null;
+                    target.src = cert.src;
                   }
                 }}
               />
@@ -242,15 +234,11 @@ const Modal: React.FC<ModalProps> = ({ certificate, isOpen, onClose }) => {
 
         <div className="relative">
           <img
-            // --- PERUBAHAN 3 ---
-            // Terapkan juga konversi WebP untuk gambar di modal
             src={getWebpSrc(certificate.src)}
             alt={certificate.alt}
             className="w-full h-auto object-contain"
             style={{ maxHeight: '70vh', width: '100%', height: 'auto' }}
             loading="eager"
-            // --- PERUBAHAN 4 ---
-            // Tambahkan juga fallback di sini
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               if (target.src !== certificate.src) {
@@ -285,7 +273,6 @@ export default function Achievement() {
     setSelectedCertificate(null);
   }, []);
 
-  // Tidak ada perubahan di komponen utama ini
   return (
     <>
       <section
