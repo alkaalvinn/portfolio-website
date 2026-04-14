@@ -1,6 +1,6 @@
 # Portfolio Website
 
-Website profil saya ini yang dibangun menggunakan React + Vite dengan sentuhan animasi interaktif dari Three.js dan Framer Motion.
+Website profil ini yang dibangun menggunakan React + Vite dengan sentuhan animasi interaktif dari Three.js dan Framer Motion.
 Website ini bertujuan untuk menampilkan informasi pribadi, pengalaman, proyek, dan cara menghubungi saya dengan desain yang modern dan responsif.
 
 ## 🚀 Demo
