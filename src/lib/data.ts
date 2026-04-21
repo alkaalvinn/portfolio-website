@@ -1,6 +1,9 @@
 import React from "react";
 import { CgWorkAlt } from "react-icons/cg";
 import { LuGraduationCap, LuCloudy } from "react-icons/lu";
+import { FaLaptopCode } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi2";
+import { PiChalkboardTeacherFill } from "react-icons/pi";
 
 export const links = [
   {
@@ -98,12 +101,28 @@ export const skillsData = [
 
 export const experiencesData = [
   {
-    title: "Front-End Developer at kitapilah.",
-    location: "Malang, Indonesia",
+    title: "Developer Intern at Telkom Indonesia",
+    location: "Central Jakarta, Indonesia",
     description:
-      "I was responsible for crafting engaging and responsive user interfaces. My work primarily involved developing the platform's front-end using HTML and CSS, leveraging the utility-first framework Tailwind CSS for efficient styling.",
-    icon: React.createElement(CgWorkAlt),
-    date: "Jan - Apr 2024",
+      "Developing an internal Risk Register Dashboard using React and Express.js with PostgreSQL to improve efficiency in risk management and reporting. Supporting internal web dashboard development, preparing documentation, and assisting in dashboard monitoring and data integration from Oracle, Denodo, APIs, and Excel.",
+    icon: React.createElement(FaLaptopCode),
+    date: "Dec 2025 - Present",
+  },
+  {
+    title: "AI Product Innovation Engineer at 8am Business",
+    location: "Singapore (Remote)",
+    description:
+      "Engineered AI workflows with n8n, optimizing APIs and LLM processing to reduce manual effort by up to 60%. Built AI interfaces using Lovable to streamline prompt flows, and managed Supabase for authentication and AI data storage to improve retrieval speed and accuracy.",
+    icon: React.createElement(HiOutlineSparkles),
+    date: "Nov 2025 - Jan 2026",
+  },
+  {
+    title: "Cloud Platform Engineering Intern at Telkomsel",
+    location: "South Jakarta, Indonesia",
+    description:
+      "Developed AWS Lambda automation to manage unattached EBS Volumes and manual Snapshots, reducing monthly cloud cost by 0.2%. Designed and implemented a Kubernetes cluster monitoring system, and helped research & document the migration of Kubernetes autoscaling from Cluster Autoscaler to Karpenter.",
+    icon: React.createElement(LuCloudy),
+    date: "Sep 2024 - Mar 2025",
   },
   {
     title: "Bangkit Academy Batch 1 2024",
@@ -114,12 +133,20 @@ export const experiencesData = [
     date: "Feb - Jul 2024",
   },
   {
-    title: "Telkomsel Cloud Platform Engineering Intern",
-    location: "Jakarta Selatan, Indonesia",
+    title: "Web Programming Assistant at Web Programming Lab FILKOM UB",
+    location: "Malang, Indonesia",
     description:
-      "At Telkomsel, I optimized costs by automating EBS volume/snapshot management using AWS Lambda (SAM), contributed to Karpenter migration for Kubernetes autoscaling, and designed an AWS Lambda/RDS PostgreSQL monitoring system for improved cluster visibility.",
-    icon: React.createElement(LuCloudy),
-    date: "Sep 2024 - Mar 2025",
+      "Taught a class of 41 students in Web Programming, covering both fundamental and advanced concepts with hands-on demonstrations. Guided students through 10 Laravel-focused modules and helped them troubleshoot coding issues.",
+    icon: React.createElement(PiChalkboardTeacherFill),
+    date: "Feb - Aug 2024",
+  },
+  {
+    title: "Front-End Developer at kitapilah.",
+    location: "Malang, Indonesia",
+    description:
+      "I was responsible for crafting engaging and responsive user interfaces. My work primarily involved developing the platform's front-end using HTML and CSS, leveraging the utility-first framework Tailwind CSS for efficient styling.",
+    icon: React.createElement(CgWorkAlt),
+    date: "Jan - Apr 2024",
   },
 ] as const;
 
