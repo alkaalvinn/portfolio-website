@@ -2,10 +2,14 @@ import { BsArrowRight, BsLinkedin } from "react-icons/bs";
 import { HiDownload } from "react-icons/hi";
 import { FaGithubSquare } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useSectionInView } from "../lib/hooks";
 
 const About = () => {
+  const { ref } = useSectionInView("About", 0.5);
+
   return (
     <section
+      ref={ref}
       id="about"
       className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 text-white"
     >

@@ -1,7 +1,7 @@
 import React from "react";
 import { CgWorkAlt } from "react-icons/cg";
 import { LuGraduationCap, LuCloudy } from "react-icons/lu";
-import { FaLaptopCode } from "react-icons/fa";
+import { FaLaptopCode, FaBriefcase } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi2";
 import { PiChalkboardTeacherFill } from "react-icons/pi";
 
@@ -100,6 +100,14 @@ export const skillsData = [
 ] as const;
 
 export const experiencesData = [
+  {
+    title: "Technology & Transformation at Deloitte",
+    location: "Central Jakarta, Indonesia",
+    description:
+      "Contributed to the design of a high-level architecture for a CRM system, translating business requirements into scalable technical solutions aligned with enterprise standards. Assisted in the development of Functional Technical Documents (FTD), bridging functional needs and technical implementation for cross-functional teams, while supporting various ad-hoc project tasks in a dynamic consulting environment.",
+    icon: React.createElement(FaBriefcase),
+    date: "Apr 2026 - Present",
+  },
   {
     title: "Developer Intern at Telkom Indonesia",
     location: "Central Jakarta, Indonesia",
