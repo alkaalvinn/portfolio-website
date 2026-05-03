@@ -8,3 +8,44 @@ html, body, #root {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+.vertical-timeline.vertical-timeline--one-column-left::before {
+  display: none;
+}
+
+.vertical-timeline--one-column-left .vertical-timeline-element {
+  margin: 0 !important;
+  padding: 1.5rem 0 !important;
+  position: relative;
+}
+
+.vertical-timeline--one-column-left .vertical-timeline-element::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.vertical-timeline--one-column-left .vertical-timeline-element:first-child::before {
+  top: 50%;
+}
+
+.vertical-timeline--one-column-left .vertical-timeline-element:last-child::before {
+  bottom: 50%;
+}
+
+.vertical-timeline--one-column-left .vertical-timeline-element-icon {
+  top: 50% !important;
+  transform: translateY(-50%);
+  margin-top: 0 !important;
+  z-index: 1;
+}
+
+.vertical-timeline--one-column-left .vertical-timeline-element-content .vertical-timeline-element-content-arrow {
+  top: 50% !important;
+  transform: translateY(-50%);
+}

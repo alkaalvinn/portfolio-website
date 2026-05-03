@@ -114,7 +114,7 @@ export const experiencesData = [
     description:
       "Developing an internal Risk Register Dashboard using React and Express.js with PostgreSQL to improve efficiency in risk management and reporting. Supporting internal web dashboard development, preparing documentation, and assisting in dashboard monitoring and data integration from Oracle, Denodo, APIs, and Excel.",
     icon: React.createElement(FaLaptopCode),
-    date: "Dec 2025 - Present",
+    date: "Dec 2025 - Apr 2026",
   },
   {
     title: "AI Product Innovation Engineer at 8am Business",
